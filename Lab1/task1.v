@@ -16,12 +16,12 @@ module testbench;
 	initial 
 		begin
 			$monitor(,$time," a=%b, b=%b, s=%b f=%b",a,b,s,f); 
-			#0 a=1'b0;b=1'b1; 
-			#2 s=1'b1; 
-			#5 s=1'b0; 
-			#10 a=1'b1;b=1'b0; 
-			#15 s=1'b1; 
-			#20 s=1'b0;
+			#0 a=10b0;b=10b1; 
+			#2 s=10b1; 
+			#5 s=10b0; 
+			#10 a=10b1;b=10b0; 
+			#15 s=10b1; 
+			#20 s=10b0;
 			#100 $finish;
 		end
 endmodule
@@ -47,12 +47,22 @@ module bcd2gray(a,b,c,d,w,x,y,z);
 	and (a0b0c0d, a0,b0,c0,d); and (bcd, b,c,d); and (ad0, a,d0); and (b0cd0, b0, c, d0);
 	or (z,a0b0c0d,bcd,ad0,b0cd0);	
 endmodule
+
+module bcd2gray_df(a,b,c,d,w,x,y,z);
+	input a,b,c,d;
+	output w,x,y,z;
 	
+	assign w = a|(b&d)|(b&c);
+	assign x = b&(!c);
+	assign y = b|c;
+	assign z = (!a&!b&!c&d)|(b&c&d)|(a&!d)|(!b&c&!d);
+endmodule
 	
+
 module test;
 	reg a,b,c,d;
 	wire w,x,y,z;
-	bcd2gray b2g (a,b,c,d,w,x,y,z);
+	bcd2gray_df b2g (a,b,c,d,w,x,y,z);
 	initial
 		begin
 			$monitor(," %b %b %b %b || %b %b %b %b",a,b,c,d,w,x,y,z);
@@ -69,8 +79,3 @@ module test;
 			#100 $finish;
 		end
 endmodule
-	
-	
-	
-
- 
